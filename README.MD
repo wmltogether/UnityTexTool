@@ -27,6 +27,20 @@ support formats such as the DXT1 & DXT5 ,ETC1/2,RGBA8888,ARGB4444,Alpha8.
 
     UnityTexTool-x64.exe -c -i test.png -o 00000000_test.tex.png -r ./
 
-## 
+## Thanks to these softwares
+
+TextureConverter.dll from Unity Editor 
+
+Magick.NET-Q8-AnyCPU.dll from Magick.NET
+
+PVRTexLibWrapper.dll £¬ ATI.TextureConverter.dll and Nvidia.TextureTools from mono game framework.
+
+astcenc.exe from ARM-software/astc-encoder
+
+
+
+
+
+
 
 
