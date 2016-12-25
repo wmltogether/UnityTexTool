@@ -146,7 +146,7 @@ namespace UnityTexTool
                 settings.Height = texture.height;
                 
                 ImageMagick.MagickImage im = new MagickImage(texture.GetPixels(), settings);
-                im.Flip();
+                im.Flip();//unity纹理是颠倒放置，要flip
                 im.ToBitmap().Save(output_name);
             }
         }
