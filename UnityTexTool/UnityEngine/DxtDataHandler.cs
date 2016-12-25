@@ -9,6 +9,13 @@ using System.Runtime.InteropServices;
 
 namespace UnityTexTool.UnityEngine
 {
+    /*
+     * code from mono game framework
+     * Microsoft Public License (Ms-PL)
+     * MonoGame - Copyright © 2009-2016 The MonoGame Team
+     * All rights reserved.
+
+    */
     public class DxtCompressor:IDisposable
     {
         public bool Compress(byte[] sourceData, int width, int height, Nvidia.TextureTools.Format textureformat, out byte[] output)
@@ -85,6 +92,8 @@ namespace UnityTexTool.UnityEngine
             GC.SuppressFinalize(this);
         }
     }
+
+    
     public class DxtDataHandler : IDisposable
     {
         public byte[] dst;
