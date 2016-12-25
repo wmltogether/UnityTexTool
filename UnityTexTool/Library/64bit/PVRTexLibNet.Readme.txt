@@ -1,0 +1,2 @@
+﻿PVRTexLib的.net wrapper 
+来源于https://github.com/MonoGame/MonoGame.Dependencies/tree/master/PVRTexLibNET
