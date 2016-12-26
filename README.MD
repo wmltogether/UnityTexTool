@@ -7,6 +7,9 @@ support formats such as the DXT1 & DXT5 ,ETC1/2,RGBA8888,ARGB4444,Alpha8.
 
  It can  simply dump and modify textures from  games which made with Unity Engine.
 
+## Disclaimer
+
+It's not a Unity Editor plugin, just a Modding Tool. Do not use these tools in your game development!
 
 ## Usage:
 
