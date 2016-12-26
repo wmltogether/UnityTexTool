@@ -28,7 +28,7 @@ namespace UnityTexTool.UnityEngine
         /// <returns></returns>
         public static bool CompressTexture(TextureFormat format, int width, int height, byte[] sourceData ,out byte[] output)
         {
-            bool result = false;
+            bool result = true;
             int pos;
             int outPos;
             output = new byte[] { };
@@ -104,12 +104,41 @@ namespace UnityTexTool.UnityEngine
                         var texDataSize = pvrTexture.GetTextureDataSize(0);
                         var texData = new byte[texDataSize];
                         pvrTexture.GetTextureData(texData, texDataSize);
-                        output = new byte[texDataSize];
+                        output = texData;
+                        result = true;
                     }
+                    break;
+
+                case TextureFormat.RGB24:
+                    pos = 0;
+                    outPos = 0;
+                    output = new byte[width * height * 3];
+                    for (int y = 0; y < height; y++)
+                    {
+                        for (int x = 0; x < width; x++)
+                        {
+
+                            // 4bit little endian {A, B},{G, R}
+                            var sR = sourceData[pos] ;
+                            var sG = sourceData[pos+1] ;
+                            var sB = sourceData[pos+2] ;
+                            var sA = sourceData[pos+3] ;
+
+                            output[outPos] = (byte)sR;
+                            output[outPos + 1] = (byte)sG;
+                            output[outPos + 2] = (byte)sB;
+                            pos += 4;
+                            outPos += 3;
+
+                        }
+                    }
+                    result = true;
                     break;
                 case TextureFormat.RGBA32:
                     output = sourceData;
+                    result = true;
                     break;
+
 
                 case TextureFormat.ATC_RGBA8:
                     output = ATICompressor.Compress(sourceData, width, height, ATICompressor.CompressionFormat.AtcRgbaExplicitAlpha);
@@ -230,6 +259,30 @@ namespace UnityTexTool.UnityEngine
                             output[outPos + 3] = fA;
 
                             pos += 4;
+                            outPos += 4;
+
+                        }
+                    }
+
+                    break;
+
+                case TextureFormat.RGB24:
+                    pos = 0;
+                    outPos = 0;
+                    for (int y = 0; y < height; y++)
+                    {
+                        for (int x = 0; x < width; x++)
+                        {
+                            var fR = input[pos];
+                            var fG = input[pos + 1];
+                            var fB = input[pos + 2];
+
+                            output[outPos] = fR;
+                            output[outPos + 1] = fG;
+                            output[outPos + 2] = fB;
+                            output[outPos + 3] = (byte)0XFF;
+
+                            pos += 3;
                             outPos += 4;
 
                         }

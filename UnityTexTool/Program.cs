@@ -66,6 +66,8 @@ namespace UnityTexTool
             if (texture.format == TextureFormat.Alpha8 ||
                 texture.format == TextureFormat.ARGB4444 ||
                 texture.format == TextureFormat.RGBA32 ||
+                texture.format == TextureFormat.RGB24 ||
+                texture.format == TextureFormat.RGB565 ||
                 texture.format == TextureFormat.ETC_RGB4 ||
                 texture.format == TextureFormat.ETC2_RGB ||
                 texture.format == TextureFormat.ETC2_RGBA8 ||
@@ -156,6 +158,8 @@ namespace UnityTexTool
             if (texture.format == TextureFormat.Alpha8 ||
                 texture.format == TextureFormat.ARGB4444 ||
                 texture.format == TextureFormat.RGBA32 ||
+                texture.format == TextureFormat.RGB24||
+                texture.format == TextureFormat.RGB565 ||
                 texture.format == TextureFormat.ETC_RGB4 ||
                 texture.format == TextureFormat.ETC2_RGB ||
                 texture.format == TextureFormat.ETC2_RGBA8 ||
