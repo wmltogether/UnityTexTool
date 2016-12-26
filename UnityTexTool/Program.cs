@@ -73,13 +73,34 @@ namespace UnityTexTool
                 texture.format == TextureFormat.DXT1)
             {
                 ImageMagick.MagickImage im = new MagickImage(input_name);
+                if ((im.Width != texture.width) || im.Height != texture.height)
+                {
+                    Console.WriteLine("Error: texture is {0} x {1} ,but png bitmap is {2} x {3}.Exit.",
+                                        texture.width, texture.height,
+                                        im.Width, im.Height);
+                    return;
+                }
                 im.Flip();
                 byte[] sourceData = im.GetPixels().ToByteArray(0, 0, im.Width, im.Height, "RGBA");
                 byte[] outputData;
                 Console.WriteLine("Reading:{0}\n Width:{1}\n Height:{2}\n Format:{3}\n", input_name, im.Width, im.Height, texture.format.ToString());
                 Console.WriteLine("Converting...");
-                TextureConverter.CompressTexture(texture.format, im.Width, im.Height, sourceData, out outputData, texture.bMipmap);
-                if (outputData != null)
+                TextureConverter.CompressTexture(texture.format, im.Width, im.Height, sourceData, out outputData);
+                if (texture.bMipmap && texture.mipmapCount >= 3)
+                {
+                    Console.WriteLine("Generating Mipmap...");
+                    for (var m =0;m <= 3; m++)
+                    {
+                        
+                        im.AdaptiveResize(im.Width / 2, im.Height / 2);
+                        Console.WriteLine("Generating ...{0}x{1}",im.Width, im.Height);
+                        sourceData = im.GetPixels().ToByteArray(0, 0, im.Width, im.Height, "RGBA");
+                        byte[] dst;
+                        TextureConverter.CompressTexture(texture.format, im.Width, im.Height, sourceData, out dst);
+                        outputData = outputData.Concat(dst).ToArray();
+                    }
+                }
+                if (outputData != null && (outputData.Length <= texture.textureSize))
                 {
                     if (texture.bHasResSData == true)
                     {
@@ -101,8 +122,10 @@ namespace UnityTexTool
                     {
                         Console.WriteLine("Error: file {0} not found", output_name);
                     }
-                    
-
+                }
+                else
+                {
+                    Console.WriteLine("Error: generated data size {0}> original texture size {1}. Exit.", outputData.Length , texture.textureSize);
                 }
 
             }

@@ -26,7 +26,7 @@ namespace UnityTexTool.UnityEngine
         /// <param name="sourceData">RGBA32 source data 8bit per channel {R8:G8:B8:A8}</param>
         /// <param name="output">dest byte arrays</param>
         /// <returns></returns>
-        public static bool CompressTexture(TextureFormat format, int width, int height, byte[] sourceData ,out byte[] output, bool bMipmapout = false)
+        public static bool CompressTexture(TextureFormat format, int width, int height, byte[] sourceData ,out byte[] output)
         {
             bool result = false;
             int pos;

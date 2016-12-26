@@ -25,7 +25,7 @@ support formats such as the DXT1 & DXT5 ,ETC1/2,RGBA8888,ARGB4444,Alpha8.
 
 4.  compress texture to texture2D binary.
 
-    UnityTexTool-x64.exe -c -i test.png -o 00000000_test.tex.png -r ./
+    UnityTexTool-x64.exe -c -i test.png -o 00000000_test.tex -r ./
 
 ## Thanks to these softwares
 
