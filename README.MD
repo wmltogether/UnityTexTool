@@ -4,6 +4,10 @@
 Compress, decompress and convert Unity3D Texture2D files (unpacked from raw *.assets packs)
 support formats such as the DXT1 & DXT5 ,ETC1/2,RGBA8888,ARGB4444,Alpha8.
 
+
+ It can  simply dump and modify textures from  games which made with Unity Engine.
+
+
 ## Usage:
 
 1.  commands:
