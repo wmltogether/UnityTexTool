@@ -62,7 +62,8 @@ namespace UnityTexTool.UnityEngine
                         var texDataSize = pvrTexture.GetTextureDataSize(0);
                         var texData = new byte[texDataSize];
                         pvrTexture.GetTextureData(texData, texDataSize); // texData 是 {A ,B , G, R}结构的像素字节数组，和传入的相反
-
+                        output = texData;
+                        
                         output = new byte[texDataSize];
                         // Unity 的ARGB4444需要的是｛B , G, R, A｝的数组，所以需要交换通道
                         pos = 0;
@@ -79,12 +80,14 @@ namespace UnityTexTool.UnityEngine
                                 var sG = v1 & 0xF0 >> 4;
                                 var sR = (v1 & 0xF0) >> 4;
                                 // swap to little endian {B, G, R, A }
-                                var fB = sB;
-                                var fG = sG;
-                                var fR = sR;
-                                var fA = sA;
-                                output[outPos] = (byte)((fB << 4) + fG);
-                                output[outPos + 1] = (byte)((fR << 4) + fA);
+                                var fB = sB & 0xf;
+                                var fG = sG & 0xf;
+                                var fR = sR & 0xf;
+                                var fA = sA & 0xf;
+
+
+                                output[outPos] = (byte)((fG << 4) + fB);
+                                output[outPos + 1] = (byte)((fA << 4) + fR);
                                 pos += 2;
                                 outPos += 2;
 
