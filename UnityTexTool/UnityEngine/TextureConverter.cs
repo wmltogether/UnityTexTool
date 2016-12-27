@@ -61,9 +61,7 @@ namespace UnityTexTool.UnityEngine
                         pvrTexture.Transcode(PVRTexLibNET.PixelFormat.RGBA4444, VariableType.UnsignedByte, ColourSpace.sRGB, CompressorQuality.PVRTCNormal, bDoDither);
                         var texDataSize = pvrTexture.GetTextureDataSize(0);
                         var texData = new byte[texDataSize];
-                        pvrTexture.GetTextureData(texData, texDataSize); // texData 是 {A ,B , G, R}结构的像素字节数组，和传入的相反
-                        output = texData;
-                        
+                        pvrTexture.GetTextureData(texData, texDataSize); // texData 是 {A ,B , G, R}结构的像素字节数组，和传入的相反             
                         output = new byte[texDataSize];
                         // Unity 的ARGB4444需要的是｛B , G, R, A｝的数组，所以需要交换通道
                         pos = 0;
@@ -80,6 +78,7 @@ namespace UnityTexTool.UnityEngine
                                 var sG = v1 & 0xF0 >> 4;
                                 var sR = (v1 & 0xF0) >> 4;
                                 // swap to little endian {B, G, R, A }
+                                // Unity早版本还有一种 R, G,B, A的格式，需要再次swap
                                 var fB = sB & 0xf;
                                 var fG = sG & 0xf;
                                 var fR = sR & 0xf;
@@ -146,7 +145,7 @@ namespace UnityTexTool.UnityEngine
                 case TextureFormat.ATC_RGB4:
                     output = ATICompressor.Compress(sourceData, width, height, ATICompressor.CompressionFormat.AtcRgb);
                     break;
-
+                
                 case TextureFormat.ETC2_RGBA8:
                     output = ATICompressor.Compress(sourceData, width, height, ATICompressor.CompressionFormat.Etc2Rgba);
                     break;
