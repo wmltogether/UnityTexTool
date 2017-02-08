@@ -378,7 +378,7 @@ namespace UnityTexTool.UnityEngine
                 case TextureFormat.RGB565:
                     using (var pvrTexture = PVRTexLibNET.PVRTexture.CreateTexture(input, (uint)width, (uint)height, 1, PVRTexLibNET.PixelFormat.RGB565, true, VariableType.UnsignedByte, ColourSpace.sRGB))
                     {
-                        pvrTexture.Transcode(PVRTexLibNET.PixelFormat.RGB565, VariableType.UnsignedByte, ColourSpace.sRGB, CompressorQuality.PVRTCNormal, false);
+                        pvrTexture.Transcode(PVRTexLibNET.PixelFormat.RGBA8888, VariableType.UnsignedByte, ColourSpace.sRGB, CompressorQuality.PVRTCNormal, false);
                         var texDataSize = pvrTexture.GetTextureDataSize(0);
                         var texData = new byte[texDataSize];
                         pvrTexture.GetTextureData(texData, texDataSize);
