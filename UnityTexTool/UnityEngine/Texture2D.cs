@@ -36,6 +36,8 @@ namespace UnityTexTool.UnityEngine
 
         public Texture2D(byte[] input, string resSFilePath = "")
         {
+            this.LoadImage(input);
+            /*
             try
             {
                 this.LoadImage(input);
@@ -43,7 +45,7 @@ namespace UnityTexTool.UnityEngine
             catch (Exception e)
             {
                 Console.WriteLine("Got error:{0}",e.Message);
-            }
+            }*/
         }
         public void LoadImage(byte[] data, string resSFilePath = "")
         {
@@ -60,14 +62,14 @@ namespace UnityTexTool.UnityEngine
                     }
                     this.width = br.ReadInt32();
                     this.height = br.ReadInt32();
-                    if ((this.width > 4096) && (this.height > 4096))
+                    if ((this.width > 4096) || (this.height > 4096))
                     {
                         isTexture2D = false;
                         Console.WriteLine("Got error:{0}", "Width/Height Error\n Not a unity Texture2D data");
                         return;
                     }
                     this.textureSize = br.ReadInt32();
-                    if ((this.width == 0) && (this.height == 0))
+                    if ((this.width == 0) || (this.height == 0))
                     {
                         isTexture2D = false;
                         Console.WriteLine("Got error:{0}", "Width/Height Error\n Empty Texture");

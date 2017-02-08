@@ -65,7 +65,9 @@ namespace UnityTexTool
             }
             if (texture.format == TextureFormat.Alpha8 ||
                 texture.format == TextureFormat.ARGB4444 ||
+                texture.format == TextureFormat.RGBA4444 ||
                 texture.format == TextureFormat.RGBA32 ||
+                texture.format == TextureFormat.ARGB32 ||
                 texture.format == TextureFormat.RGB24 ||
                 texture.format == TextureFormat.RGB565 ||
                 texture.format == TextureFormat.ETC_RGB4 ||
@@ -141,10 +143,11 @@ namespace UnityTexTool
         {
             byte[] input = File.ReadAllBytes(input_name);
             Texture2D texture = new Texture2D(input, resSFilePath);
-            if (texture.isTexture2D == false)
+            if (texture.isTexture2D == false || texture.GetPixels() == null)
             {
                 return;
             }
+
             Console.WriteLine("Reading: {0}\n Width: {1}\n Height: {2}\n Format: {3}\n Dimension: {4}\n Filter Mode: {5}\n Wrap Mode: {6}\n Mipmap: {7}",
                                 input_name,
                                 texture.width,
@@ -157,7 +160,9 @@ namespace UnityTexTool
 
             if (texture.format == TextureFormat.Alpha8 ||
                 texture.format == TextureFormat.ARGB4444 ||
+                texture.format == TextureFormat.RGBA4444 ||
                 texture.format == TextureFormat.RGBA32 ||
+                texture.format == TextureFormat.ARGB32 ||
                 texture.format == TextureFormat.RGB24||
                 texture.format == TextureFormat.RGB565 ||
                 texture.format == TextureFormat.ETC_RGB4 ||
@@ -251,23 +256,30 @@ namespace UnityTexTool
             }
             if (bShowInfo && (filename != null))
             {
-                Texture2D texture = new Texture2D(File.ReadAllBytes(filename), resSFilePath);
-                if (texture.isTexture2D == false)
+                try
                 {
-                    return;
+                    Texture2D texture = new Texture2D(File.ReadAllBytes(filename), resSFilePath);
+                    if (texture.isTexture2D == false)
+                    {
+                        return;
+                    }
+                    Console.WriteLine("Reading: {0}\n Width: {1}\n Height: {2}\n Format: {3}\n Dimension: {4}\n Filter Mode: {5}\n " +
+                                        "Wrap Mode: {6}\n Mipmap: {7}\n ResS Type : {8}\n Data Offset: {9:X8}",
+                                        filename,
+                                        texture.width,
+                                        texture.height,
+                                        texture.format.ToString(),
+                                        texture.dimension.ToString(),
+                                        texture.filterMode.ToString(),
+                                        texture.wrapMode.ToString(),
+                                        texture.bMipmap,
+                                        texture.bHasResSData,
+                                        texture.dataPos);
                 }
-                Console.WriteLine("Reading: {0}\n Width: {1}\n Height: {2}\n Format: {3}\n Dimension: {4}\n Filter Mode: {5}\n "+
-                                    "Wrap Mode: {6}\n Mipmap: {7}\n ResS Type : {8}\n Data Offset: {9:X8}",
-                                    filename,
-                                    texture.width,
-                                    texture.height,
-                                    texture.format.ToString(),
-                                    texture.dimension.ToString(),
-                                    texture.filterMode.ToString(),
-                                    texture.wrapMode.ToString(),
-                                    texture.bMipmap,
-                                    texture.bHasResSData,
-                                    texture.dataPos);
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
                 return;
             }
             if (filename == outputName)

@@ -137,8 +137,31 @@ namespace UnityTexTool.UnityEngine
                     output = sourceData;
                     result = true;
                     break;
+                case TextureFormat.ARGB32:
+                    pos = 0;
+                    outPos = 0;
+                    for (int y = 0; y < height; y++)
+                    {
+                        for (int x = 0; x < width; x++)
+                        {
+                            var fA = sourceData[pos];
+                            var fR = sourceData[pos + 1];
+                            var fG = sourceData[pos + 2];
+                            var fB = sourceData[pos + 3];
 
+                            output[outPos] = fR;
+                            output[outPos + 1] = fG;
+                            output[outPos + 2] = fB;
+                            output[outPos + 3] = fA;
 
+                            pos += 4;
+                            outPos += 4;
+
+                        }
+                    }
+
+                    result = true;
+                    break;
                 case TextureFormat.ATC_RGBA8:
                     output = ATICompressor.Compress(sourceData, width, height, ATICompressor.CompressionFormat.AtcRgbaExplicitAlpha);
                     break;
@@ -240,6 +263,47 @@ namespace UnityTexTool.UnityEngine
                     }
                     
                     break;
+                case TextureFormat.RGBA4444:
+                    pos = 0;
+                    outPos = 0;
+                    for (int y = 0; y < height; y++)
+                    {
+                        for (int x = 0; x < width; x++)
+                        {
+                            var v0 = input[pos];
+                            var v1 = input[pos + 1];
+                            // 4bit little endian {B, G}, {R, A }
+                            // 16BIT位图 每个颜色占4bit 比如 一个 hex F1F2 > 0xF2F1
+                            // B, G, R, A = 01, 0F, 02 ,0F
+                            // 则 A , R, ,G, B = 0F, 02, 0F ,01
+                            // 转换回RGBA8888 则是 02 0F 01 0F
+                            var fA = v0 & 0xF0 >> 4; //低四位
+                            var fR = (v0 & 0xF0) >> 4;//高四位
+                            var fG = v1 & 0xF0 >> 4;//低四位
+                            var fB = (v1 & 0xF0) >> 4;//高四位
+                            /*var fA = v0 & 0xF0 >> 4;
+                            var fB = (v0 & 0xF0) >> 4;
+                            var fG = v1 & 0xF0 >> 4;
+                            var fR = (v1 & 0xF0) >> 4;*/
+
+
+                            fA = (fA * 255 + 7) / 15;
+                            fR = (fR * 255 + 7) / 15;
+                            fG = (fG * 255 + 7) / 15;
+                            fB = (fB * 255 + 7) / 15;
+
+                            output[outPos] = (byte)fR;
+                            output[outPos + 1] = (byte)fG;
+                            output[outPos + 2] = (byte)fB;
+                            output[outPos + 3] = (byte)fA;
+
+                            pos += (2);
+                            outPos += 4;
+
+                        }
+                    }
+
+                    break;
                 case TextureFormat.RGBA32:
                     pos = 0;
                     outPos = 0;
@@ -264,7 +328,30 @@ namespace UnityTexTool.UnityEngine
                     }
 
                     break;
+                case TextureFormat.ARGB32:
+                    pos = 0;
+                    outPos = 0;
+                    for (int y = 0; y < height; y++)
+                    {
+                        for (int x = 0; x < width; x++)
+                        {
+                            var fA = input[pos];
+                            var fR = input[pos + 1];
+                            var fG = input[pos + 2];
+                            var fB = input[pos + 3];
 
+                            output[outPos] = fR;
+                            output[outPos + 1] = fG;
+                            output[outPos + 2] = fB;
+                            output[outPos + 3] = fA;
+
+                            pos += 4;
+                            outPos += 4;
+
+                        }
+                    }
+
+                    break;
                 case TextureFormat.RGB24:
                     pos = 0;
                     outPos = 0;
@@ -291,7 +378,7 @@ namespace UnityTexTool.UnityEngine
                 case TextureFormat.RGB565:
                     using (var pvrTexture = PVRTexLibNET.PVRTexture.CreateTexture(input, (uint)width, (uint)height, 1, PVRTexLibNET.PixelFormat.RGB565, true, VariableType.UnsignedByte, ColourSpace.sRGB))
                     {
-                        pvrTexture.Transcode(PVRTexLibNET.PixelFormat.RGBA8888, VariableType.UnsignedByte, ColourSpace.sRGB, CompressorQuality.PVRTCNormal, false);
+                        pvrTexture.Transcode(PVRTexLibNET.PixelFormat.RGB565, VariableType.UnsignedByte, ColourSpace.sRGB, CompressorQuality.PVRTCNormal, false);
                         var texDataSize = pvrTexture.GetTextureDataSize(0);
                         var texData = new byte[texDataSize];
                         pvrTexture.GetTextureData(texData, texDataSize);

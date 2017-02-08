@@ -1,2 +1,25 @@
 ﻿PVRTexLib的.net wrapper 
 来源于https://github.com/MonoGame/MonoGame.Dependencies/tree/master/PVRTexLibNET
+
+using ImageMagick;
+using PVRTexLibNET;
+
+
+                using (var pvrTexture = PVRTexLibNET.PVRTexture.CreateTexture(input, (uint)width, (uint)height, 1, PVRTexLibNET.PixelFormat.PVRTCI_4bpp_RGBA, true, VariableType.UnsignedByte, ColourSpace.sRGB))
+                {
+                        pvrTexture.Transcode(PVRTexLibNET.PixelFormat.RGBA8888, VariableType.UnsignedByte, ColourSpace.sRGB, CompressorQuality.PVRTCNormal, false);
+                        var texDataSize = pvrTexture.GetTextureDataSize(0);
+                        var texData = new byte[texDataSize];
+                        pvrTexture.GetTextureData(texData, texDataSize);
+                        output = texData;
+                }
+
+
+                MagickReadSettings settings = new MagickReadSettings();
+                settings.Format = MagickFormat.Rgba;
+                settings.Width = texture.width;
+                settings.Height = texture.height;
+                
+                ImageMagick.MagickImage im = new MagickImage(texture.GetBytes(), settings);
+                im.Flip();//unity纹理是颠倒放置，要flip
+                im.ToBitmap().Save(output_name);
