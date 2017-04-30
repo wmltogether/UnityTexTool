@@ -95,6 +95,12 @@ namespace UnityTexTool.UnityEngine
                     int colorSpace = br.ReadInt32();
 
                     this.dataSize = br.ReadInt32();
+                    if (this.dataSize <= 0)
+                    {
+                        Console.WriteLine("Got error:{0}", "Data Length Error\n Not a unity Texture2D data");
+                        isTexture2D = false;
+                        return;
+                    }
                     if (this.dataSize == 0)
                     {
                         
@@ -102,7 +108,7 @@ namespace UnityTexTool.UnityEngine
                         this.dataSize = br.ReadInt32();
                         int name_len = br.ReadInt32();
 
-                        if (this.dataSize == 0)
+                        if (this.dataSize <= 0)
                         {
                             Console.WriteLine("Got error:{0}", "Data Length is 0\n Not a unity Texture2D data");
                             isTexture2D = false;

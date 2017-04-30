@@ -58,12 +58,15 @@ namespace UnityTexTool
         {
             
             byte[] dstTex2D = File.ReadAllBytes(output_name);
-            Texture2D texture = new Texture2D(dstTex2D);
-            if (texture.isTexture2D == false)
+            Texture2D texture;
+            try
             {
-                return;
-            }
-            if (texture.format == TextureFormat.Alpha8 ||
+                texture = new Texture2D(dstTex2D);
+                if (texture.isTexture2D == false)
+                {
+                    return;
+                }
+                if (texture.format == TextureFormat.Alpha8 ||
                 texture.format == TextureFormat.ARGB4444 ||
                 texture.format == TextureFormat.RGBA4444 ||
                 texture.format == TextureFormat.RGBA32 ||
@@ -74,65 +77,74 @@ namespace UnityTexTool
                 texture.format == TextureFormat.ETC2_RGB ||
                 texture.format == TextureFormat.ETC2_RGBA8 ||
                 texture.format == TextureFormat.DXT5 ||
-                texture.format == TextureFormat.DXT1)
-            {
-                ImageMagick.MagickImage im = new MagickImage(input_name);
-                if ((im.Width != texture.width) || im.Height != texture.height)
+                texture.format == TextureFormat.DXT1 ||
+                texture.format == TextureFormat.ASTC_RGBA_4x4 ||
+                texture.format == TextureFormat.ASTC_RGB_4x4)
                 {
-                    Console.WriteLine("Error: texture is {0} x {1} ,but png bitmap is {2} x {3}.Exit.",
-                                        texture.width, texture.height,
-                                        im.Width, im.Height);
-                    return;
-                }
-                im.Flip();
-                byte[] sourceData = im.GetPixels().ToByteArray(0, 0, im.Width, im.Height, "RGBA");
-                byte[] outputData;
-                Console.WriteLine("Reading:{0}\n Width:{1}\n Height:{2}\n Format:{3}\n", input_name, im.Width, im.Height, texture.format.ToString());
-                Console.WriteLine("Converting...");
-                TextureConverter.CompressTexture(texture.format, im.Width, im.Height, sourceData, out outputData);
-                if (texture.bMipmap && texture.mipmapCount >= 3)
-                {
-                    Console.WriteLine("Generating Mipmap...");
-                    for (var m =0;m <= 3; m++)
+                    ImageMagick.MagickImage im = new MagickImage(input_name);
+                    if ((im.Width != texture.width) || im.Height != texture.height)
                     {
-                        
-                        im.AdaptiveResize(im.Width / 2, im.Height / 2);
-                        Console.WriteLine("Generating ...{0}x{1}",im.Width, im.Height);
-                        sourceData = im.GetPixels().ToByteArray(0, 0, im.Width, im.Height, "RGBA");
-                        byte[] dst;
-                        TextureConverter.CompressTexture(texture.format, im.Width, im.Height, sourceData, out dst);
-                        outputData = outputData.Concat(dst).ToArray();
+                        Console.WriteLine("Error: texture is {0} x {1} ,but png bitmap is {2} x {3}.Exit.",
+                                            texture.width, texture.height,
+                                            im.Width, im.Height);
+                        return;
                     }
-                }
-                if (outputData != null && (outputData.Length <= texture.textureSize))
-                {
-                    if (texture.bHasResSData == true)
+                    im.Flip();
+                    byte[] sourceData = im.GetPixels().ToByteArray(0, 0, im.Width, im.Height, "RGBA");
+                    byte[] outputData;
+                    Console.WriteLine("Reading:{0}\n Width:{1}\n Height:{2}\n Format:{3}\n", input_name, im.Width, im.Height, texture.format.ToString());
+                    Console.WriteLine("Converting...");
+                    TextureConverter.CompressTexture(texture.format, im.Width, im.Height, sourceData, out outputData);
+                    if (texture.bMipmap && texture.mipmapCount >= 3)
                     {
-                        output_name = string.Format("{0}/{1}", resSFilePath, texture.resSName);
-
-                    }
-                    if (File.Exists(output_name))
-                    {
-                        Console.WriteLine("Writing...{0}", output_name);
-                        using (FileStream fs = File.Open(output_name, FileMode.Open, FileAccess.ReadWrite))
+                        Console.WriteLine("Generating Mipmap...");
+                        for (var m = 0; m <= 3; m++)
                         {
-                            fs.Seek(texture.dataPos, SeekOrigin.Begin);
-                            fs.Write(outputData, 0, outputData.Length);
-                            fs.Flush();
+
+                            im.AdaptiveResize(im.Width / 2, im.Height / 2);
+                            Console.WriteLine("Generating ...{0}x{1}", im.Width, im.Height);
+                            sourceData = im.GetPixels().ToByteArray(0, 0, im.Width, im.Height, "RGBA");
+                            byte[] dst;
+                            TextureConverter.CompressTexture(texture.format, im.Width, im.Height, sourceData, out dst);
+                            outputData = outputData.Concat(dst).ToArray();
                         }
-                        Console.WriteLine("File Created...");
+                    }
+                    if (outputData != null && (outputData.Length <= texture.textureSize))
+                    {
+                        if (texture.bHasResSData == true)
+                        {
+                            output_name = string.Format("{0}/{1}", resSFilePath, texture.resSName);
+
+                        }
+                        if (File.Exists(output_name))
+                        {
+                            Console.WriteLine("Writing...{0}", output_name);
+                            using (FileStream fs = File.Open(output_name, FileMode.Open, FileAccess.ReadWrite))
+                            {
+                                fs.Seek(texture.dataPos, SeekOrigin.Begin);
+                                fs.Write(outputData, 0, outputData.Length);
+                                fs.Flush();
+                            }
+                            Console.WriteLine("File Created...");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Error: file {0} not found", output_name);
+                        }
                     }
                     else
                     {
-                        Console.WriteLine("Error: file {0} not found", output_name);
+                        Console.WriteLine("Error: generated data size {0}> original texture size {1}. Exit.", outputData.Length, texture.textureSize);
                     }
-                }
-                else
-                {
-                    Console.WriteLine("Error: generated data size {0}> original texture size {1}. Exit.", outputData.Length , texture.textureSize);
-                }
 
+                }
             }
+            catch
+            {
+                Console.WriteLine("Error:Not A valid Texture");
+            }
+            
+            
 
 
 
@@ -169,7 +181,9 @@ namespace UnityTexTool
                 texture.format == TextureFormat.ETC2_RGB ||
                 texture.format == TextureFormat.ETC2_RGBA8 ||
                 texture.format == TextureFormat.DXT5 ||
-                texture.format == TextureFormat.DXT1 
+                texture.format == TextureFormat.DXT1 ||
+                texture.format == TextureFormat.ASTC_RGBA_4x4 ||
+                texture.format == TextureFormat.ASTC_RGB_4x4
                 )
             {
                 MagickReadSettings settings = new MagickReadSettings();

@@ -188,6 +188,12 @@ namespace UnityTexTool.UnityEngine
                         result = compressor.Compress(sourceData, width, height, Nvidia.TextureTools.Format.DXT1, out output);
                     }
                     break;
+                case TextureFormat.ASTC_RGBA_4x4:
+                    astcencWrapper.EncodeASTC(sourceData, width, height, 4, 4, out output);
+                    break;
+                case TextureFormat.ASTC_RGB_4x4:
+                    astcencWrapper.EncodeASTC(sourceData, width, height, 4, 4, out output);
+                    break;
                 default:
                     result = false;
                     break;
@@ -440,7 +446,16 @@ namespace UnityTexTool.UnityEngine
                         output = texData;
                     }
                     break;
-
+                case TextureFormat.ASTC_RGB_4x4:
+                    Console.WriteLine("is ASTC RGB 4X4");
+                    astcencWrapper.DecodeASTC(input, width, height, 4, 4, out output);
+                    Console.WriteLine("got decompress length :{0}", output.Length);
+                    break;
+                case TextureFormat.ASTC_RGBA_4x4:
+                    Console.WriteLine("is ASTC RGBA 4X4");
+                    astcencWrapper.DecodeASTC(input, width, height, 4, 4, out output);
+                    Console.WriteLine("got decompress length :{0}", output.Length);
+                    break;
                 default:
                     result = false;
                     break;
