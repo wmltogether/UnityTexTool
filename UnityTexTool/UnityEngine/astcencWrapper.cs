@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Diagnostics;
 using ImageMagick;
+using System.Drawing.Imaging;
 
 namespace UnityTexTool.UnityEngine
 {
@@ -17,7 +18,7 @@ namespace UnityTexTool.UnityEngine
         {
             dstBytes = null;
             string tastcpath = Path.Combine(Environment.CurrentDirectory, "temp.astc");
-            string ttgapath = Path.Combine(Environment.CurrentDirectory, "temp.tga");
+            string ttgapath = Path.Combine(Environment.CurrentDirectory, "temp.png");
             if (File.Exists(tastcpath)) File.Delete(tastcpath);
             if (File.Exists(ttgapath)) File.Delete(ttgapath);
             MagickReadSettings settings = new MagickReadSettings();
@@ -33,8 +34,8 @@ namespace UnityTexTool.UnityEngine
                 process.StartInfo.WorkingDirectory = Environment.CurrentDirectory;
                 process.StartInfo.FileName = encoder;
                 process.StartInfo.UseShellExecute = false;
-                process.StartInfo.Arguments = string.Format(@"-c ""{0}"" ""{1}"" {3}x{4} -medium", ttgapath, tastcpath, block_xsize, block_ysize);
-                Console.WriteLine(string.Format(@"-c ""{0}"" ""{1}"" {3}x{4} -medium", ttgapath, tastcpath, block_xsize, block_ysize));
+                process.StartInfo.Arguments = string.Format(@"-c ""{0}"" ""{1}"" {2}x{3} -medium", ttgapath, tastcpath, block_xsize, block_ysize);
+                Console.WriteLine(string.Format(@"-c ""{0}"" ""{1}"" {2}x{3} -medium", ttgapath, tastcpath, block_xsize, block_ysize));
                 process.Start();
                 process.WaitForExit();
             }
@@ -43,8 +44,9 @@ namespace UnityTexTool.UnityEngine
             {
                 using (FileStream fs = File.Open(tastcpath, FileMode.Open))
                 {
+                    dstBytes = new byte[(int)fs.Length - 0x10];
                     fs.Seek(0x10, SeekOrigin.Begin);
-                    fs.Read(dstBytes, (int)fs.Position, (int)fs.Length - 0x10);
+                    fs.Read(dstBytes, 0, (int)fs.Length - 0x10);
                 }
             }
         }

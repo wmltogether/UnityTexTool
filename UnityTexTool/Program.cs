@@ -109,8 +109,12 @@ namespace UnityTexTool
                             outputData = outputData.Concat(dst).ToArray();
                         }
                     }
-                    if (outputData != null && (outputData.Length <= texture.textureSize))
+                    if (outputData != null)
                     {
+                        if ((outputData.Length >= texture.textureSize))
+                        {
+                            Console.WriteLine("Error: generated data size {0}> original texture size {1}. Exit.", outputData.Length, texture.textureSize);
+                        }
                         if (texture.bHasResSData == true)
                         {
                             output_name = string.Format("{0}/{1}", resSFilePath, texture.resSName);
@@ -139,9 +143,9 @@ namespace UnityTexTool
 
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Error:Not A valid Texture");
+                Console.WriteLine("Error:Not A valid Texture: {0}", ex.ToString());
             }
             
             

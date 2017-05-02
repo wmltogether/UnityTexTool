@@ -189,9 +189,11 @@ namespace UnityTexTool.UnityEngine
                     }
                     break;
                 case TextureFormat.ASTC_RGBA_4x4:
+                    Console.WriteLine("compressing astc 4x4");
                     astcencWrapper.EncodeASTC(sourceData, width, height, 4, 4, out output);
                     break;
                 case TextureFormat.ASTC_RGB_4x4:
+                    Console.WriteLine("compressing astc 4x4");
                     astcencWrapper.EncodeASTC(sourceData, width, height, 4, 4, out output);
                     break;
                 default:
