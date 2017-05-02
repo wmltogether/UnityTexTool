@@ -111,7 +111,7 @@ namespace UnityTexTool
                     }
                     if (outputData != null)
                     {
-                        if ((outputData.Length >= texture.textureSize))
+                        if ((outputData.Length > texture.textureSize))
                         {
                             Console.WriteLine("Error: generated data size {0}> original texture size {1}. Exit.", outputData.Length, texture.textureSize);
                         }

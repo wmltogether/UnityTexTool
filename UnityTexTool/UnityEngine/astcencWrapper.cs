@@ -49,6 +49,8 @@ namespace UnityTexTool.UnityEngine
                     fs.Read(dstBytes, 0, (int)fs.Length - 0x10);
                 }
             }
+            if (File.Exists(tastcpath)) File.Delete(tastcpath);
+            if (File.Exists(ttgapath)) File.Delete(ttgapath);
         }
 
         public static void DecodeASTC(byte[] inputBytes, int width, int height, int block_xsize, int block_ysize, out byte[] dstBytes)
@@ -78,14 +80,13 @@ namespace UnityTexTool.UnityEngine
                 dstBytes = im.GetPixels().ToByteArray(0, 0, im.Width, im.Height, "RGBA");
                 im.Dispose();
 
-                if (File.Exists(tastcpath)) File.Delete(tastcpath);
-                if (File.Exists(ttgapath)) File.Delete(ttgapath);
-
             }
             else
             {
                 Console.WriteLine("ERR: astcenc.exe encoding error");
             }
+            if (File.Exists(tastcpath)) File.Delete(tastcpath);
+            if (File.Exists(ttgapath)) File.Delete(ttgapath);
         }
 
         private static void GenerateASTCFile(byte[] inputBytes, int width, int height, int block_xsize, int block_ysize)
